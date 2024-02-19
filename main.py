@@ -136,7 +136,7 @@ from streamlit_extras.buy_me_a_coffee import button
 
 button(username="jhpark", floating=True, width=221)
 #제목
-st.title("ChatPDF")
+st.title("노랑풍선 ChatPDF")
 st.write("---")
 
 #OpenAI KEY 입력 받기
