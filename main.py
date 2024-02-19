@@ -172,7 +172,7 @@ if uploaded_file is not None:
     texts = text_splitter.split_documents(pages)
 
     #Embedding
-    embeddings_model = OpenAIEmbeddings(openai_api_key=openai_key)
+    embeddings_model = OpenAIEmbeddings()
 
     # load it into Chroma
     db = Chroma.from_documents(texts, embeddings_model)
