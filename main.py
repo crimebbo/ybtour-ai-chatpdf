@@ -133,8 +133,10 @@ import streamlit as st
 import tempfile
 import os
 from streamlit_extras.buy_me_a_coffee import button
+from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
-button(username="jhpark", floating=True, width=221)
+button(username="ybtour", floating=True, width=221)
+
 #제목
 st.title("노랑풍선 ChatPDF")
 st.write("---")
@@ -175,16 +177,27 @@ if uploaded_file is not None:
     # load it into Chroma
     db = Chroma.from_documents(texts, embeddings_model)
 
+    #Stream 받아 줄 Hander 만들기
+    from langchain.callbacks.base import BaseCallbackHandler
+    class StreamHandler(BaseCallbackHandler):
+        def __init__(self, container, initial_text=""):
+            self.container = container
+            self.text=initial_text
+        def on_llm_new_token(self, token: str, **kwargs) -> None:
+            self.text+=token
+            self.container.markdown(self.text)
+
     #Question
     st.header("PDF에게 질문해보세요!!")
     question = st.text_input('질문을 입력하세요')
 
     if st.button('질문하기'):
         with st.spinner('Wait for it...'):
-            llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0, openai_api_key=openai_key)
+            chat_box = st.empty()
+            stream_hander = StreamHandler(chat_box)
+            llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0, openai_api_key=openai_key, streaming=True, callbacks=[stream_hander])
             qa_chain = RetrievalQA.from_chain_type(llm,retriever=db.as_retriever())
-            result = qa_chain({"query": question})
-            st.write(result["result"])
+            qa_chain({"query": question})
 
 
 
