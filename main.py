@@ -134,18 +134,19 @@ import tempfile
 import os
 from streamlit_extras.buy_me_a_coffee import button
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+from langchain_community.document_loaders.csv_loader import CSVLoader
 
 button(username="ybtour", floating=True, width=221)
 
 #제목
-st.title("노랑풍선 ChatPDF")
+st.title("노랑풍선 ChatFile")
 st.write("---")
 
 #OpenAI KEY 입력 받기
 openai_key = st.text_input('OPEN_AI_API_KEY', type="password")
 
 #파일 업로드
-uploaded_file = st.file_uploader("PDF 파일을 올려주세요!",type=['pdf'])
+uploaded_file = st.file_uploader("파일을 올려주세요!")
 st.write("---")
 
 def pdf_to_document(uploaded_file):
@@ -153,8 +154,17 @@ def pdf_to_document(uploaded_file):
     temp_filepath = os.path.join(temp_dir.name, uploaded_file.name)
     with open(temp_filepath, "wb") as f:
         f.write(uploaded_file.getvalue())
-    loader = PyPDFLoader(temp_filepath)
-    pages = loader.load_and_split()
+
+    print("확장자: ", os.path.splitext(temp_filepath)[1])
+    ext = os.path.splitext(temp_filepath)[1]
+    if ext  == ".csv":
+        loader = CSVLoader(temp_filepath)
+        pages = loader.load()
+        print(pages)
+    if ext == ".pdf":
+        loader = PyPDFLoader(temp_filepath)
+        pages = loader.load_and_split()
+        print(pages)
     return pages
 
 #업로드 되면 동작하는 코드
