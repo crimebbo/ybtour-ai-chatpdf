@@ -160,11 +160,11 @@ def pdf_to_document(uploaded_file):
     if ext  == ".csv":
         loader = CSVLoader(temp_filepath)
         pages = loader.load()
-        print(pages)
-    if ext == ".pdf":
+    
+    elif ext == ".pdf":
         loader = PyPDFLoader(temp_filepath)
         pages = loader.load_and_split()
-        print(pages)
+
     return pages
 
 #업로드 되면 동작하는 코드
