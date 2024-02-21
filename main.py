@@ -154,18 +154,19 @@ def pdf_to_document(uploaded_file):
     temp_filepath = os.path.join(temp_dir.name, uploaded_file.name)
     with open(temp_filepath, "wb") as f:
         f.write(uploaded_file.getvalue())
+        print("확장자: ", os.path.splitext(temp_filepath)[1])
+        ext = os.path.splitext(temp_filepath)[1]
 
-    print("확장자: ", os.path.splitext(temp_filepath)[1])
-    ext = os.path.splitext(temp_filepath)[1]
-    if ext  == ".csv":
+    if ext == ".csv":
         loader = CSVLoader(temp_filepath)
         pages = loader.load()
-    
+        print(pages)
+        return pages
     elif ext == ".pdf":
         loader = PyPDFLoader(temp_filepath)
         pages = loader.load_and_split()
-
-    return pages
+        print(pages)
+        return pages
 
 #업로드 되면 동작하는 코드
 if uploaded_file is not None:
