@@ -136,7 +136,7 @@ from streamlit_extras.buy_me_a_coffee import button
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain_community.document_loaders.csv_loader import CSVLoader
 
-button(username="ybtour", floating=True, width=221)
+button(username="jhpark", floating=True, width=221)
 
 #제목
 st.title("노랑풍선 ChatFile")
