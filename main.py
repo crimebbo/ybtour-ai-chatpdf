@@ -149,6 +149,15 @@ openai_key = st.text_input('OPEN_AI_API_KEY', type="password")
 uploaded_file = st.file_uploader("파일을 올려주세요!")
 st.write("---")
 
+genre = st.radio(
+    "LLm 타입을 선택하세요.",
+    [":rainbow[gpt-3.5-turbo]", "llama-2-7b-chat.ggmlv3.q8_0.bin"])
+
+if genre == ':rainbow[gpt-3.5-turbo]':
+    st.write('gpt-3.5-turbo 를 선택했습니다.')
+else:
+    st.write("llama-2-7b-chat.ggmlv3.q8_0.bin 를 선택했습니다.")
+    
 def pdf_to_document(uploaded_file):
     temp_dir = tempfile.TemporaryDirectory()
     temp_filepath = os.path.join(temp_dir.name, uploaded_file.name)
