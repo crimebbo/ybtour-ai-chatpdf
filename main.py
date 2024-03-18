@@ -167,7 +167,7 @@ def pdf_to_document(uploaded_file):
         ext = os.path.splitext(temp_filepath)[1]
 
     if ext == ".csv":
-        loader = CSVLoader(temp_filepath)
+        loader = CSVLoader(temp_filepath, encoding='latin1')
         pages = loader.load()
         return pages
     elif ext == ".pdf":
