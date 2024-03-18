@@ -178,8 +178,8 @@ def pdf_to_document(uploaded_file):
 #업로드 되면 동작하는 코드
 if uploaded_file is not None:
     pages = pdf_to_document(uploaded_file)
-    chunk_size=3000
-    # Initialize an empty list to store the split texts
+    chunk_size = 3000
+    #Initialize an empty list to store the split texts
     all_texts = []
 
     # Loop through the document in chunks of 3000 characters
@@ -187,21 +187,34 @@ if uploaded_file is not None:
         # Extract a chunk of text
         chunk = pages[i:i + chunk_size]
 
-        # Split the chunk into smaller pieces
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=300,  # 이 값은 적절히 조정 가능
-            chunk_overlap=20,  # 이 값은 적절히 조정 가능
-            length_function=len,
-            is_separator_regex=False,
-        )
-        chunk_texts = text_splitter.split_documents(chunk)
+        try:
+            # Split the chunk into smaller pieces
+            text_splitter = RecursiveCharacterTextSplitter(
+                chunk_size=300,  # 이 값은 적절히 조정 가능
+                chunk_overlap=20,  # 이 값은 적절히 조정 가능
+                length_function=len,
+                is_separator_regex=False,
+            )
+            chunk_texts = text_splitter.split_documents(chunk)
 
-        # Extend the list of texts
-        all_texts.extend(chunk_texts)
+            # Extend the list of texts
+            all_texts.extend(chunk_texts)
+        except UnicodeDecodeError:
+            # If decoding fails, try Latin-1 encoding
+            chunk = chunk.decode("latin-1")
+            # Retry splitting the chunk
+            text_splitter = RecursiveCharacterTextSplitter(
+                chunk_size=300,  # 이 값은 적절히 조정 가능
+                chunk_overlap=20,  # 이 값은 적절히 조정 가능
+                length_function=len,
+                is_separator_regex=False,
+            )
+            chunk_texts = text_splitter.split_documents(chunk)
 
-    # Embedding
+            # Extend the list of texts
+            all_texts.extend(chunk_texts)
+
     embeddings_model = OpenAIEmbeddings(openai_api_key=openai_key)
-
     # Load it into Chroma
     db = Chroma.from_documents(all_texts, embeddings_model)
 
