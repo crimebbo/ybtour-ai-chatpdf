@@ -187,21 +187,17 @@ if uploaded_file is not None:
         # Extract a chunk of text
         chunk = pages[i:i + chunk_size]
 
-        try:
-            # Split the chunk into smaller pieces
-            text_splitter = RecursiveCharacterTextSplitter(
-                chunk_size=300,  # 이 값은 적절히 조정 가능
-                chunk_overlap=20,  # 이 값은 적절히 조정 가능
-                length_function=len,
-                is_separator_regex=False,
-            )
-            chunk_texts = text_splitter.split_documents(chunk)
-
-            # Extend the list of texts
-            all_texts.extend(chunk_texts)
-        except UnicodeDecodeError:
-            print('error')
-
+        # Split the chunk into smaller pieces
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=300,  # 이 값은 적절히 조정 가능
+            chunk_overlap=20,  # 이 값은 적절히 조정 가능
+            length_function=len,
+            is_separator_regex=False,
+        )
+        chunk_texts = text_splitter.split_documents(chunk)
+        # Extend the list of texts
+        all_texts.extend(chunk_texts)
+    
     embeddings_model = OpenAIEmbeddings(openai_api_key=openai_key)
     # Load it into Chroma
     db = Chroma.from_documents(all_texts, embeddings_model)
