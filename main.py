@@ -179,7 +179,7 @@ def pdf_to_document(uploaded_file):
 if uploaded_file is not None:
     pages = pdf_to_document(uploaded_file)
 
-   chunk_size = 3000
+    chunk_size = 3000
 
     # Initialize an empty list to store the split texts
     all_texts = []
