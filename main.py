@@ -200,19 +200,7 @@ if uploaded_file is not None:
             # Extend the list of texts
             all_texts.extend(chunk_texts)
         except UnicodeDecodeError:
-            # If decoding fails, try Latin-1 encoding
-            chunk = chunk.decode("latin-1")
-            # Retry splitting the chunk
-            text_splitter = RecursiveCharacterTextSplitter(
-                chunk_size=300,  # 이 값은 적절히 조정 가능
-                chunk_overlap=20,  # 이 값은 적절히 조정 가능
-                length_function=len,
-                is_separator_regex=False,
-            )
-            chunk_texts = text_splitter.split_documents(chunk)
-
-            # Extend the list of texts
-            all_texts.extend(chunk_texts)
+            print('error')
 
     embeddings_model = OpenAIEmbeddings(openai_api_key=openai_key)
     # Load it into Chroma
