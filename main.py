@@ -179,21 +179,33 @@ def pdf_to_document(uploaded_file):
 if uploaded_file is not None:
     pages = pdf_to_document(uploaded_file)
 
-    #Split
-    text_splitter = RecursiveCharacterTextSplitter(
-        # Set a really small chunk size, just to show.
-        chunk_size = 300,
-        chunk_overlap  = 20,
-        length_function = len,
-        is_separator_regex = False,
-    )
-    texts = text_splitter.split_documents(pages)
+   chunk_size = 3000
 
-    #Embedding
-    embeddings_model = OpenAIEmbeddings()
+    # Initialize an empty list to store the split texts
+    all_texts = []
 
-    # load it into Chroma
-    db = Chroma.from_documents(texts, embeddings_model)
+    # Loop through the document in chunks of 3000 characters
+    for i in range(0, len(pages), chunk_size):
+        # Extract a chunk of text
+        chunk = pages[i:i + chunk_size]
+
+        # Split the chunk into smaller pieces
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=300,  # 이 값은 적절히 조정 가능
+            chunk_overlap=20,  # 이 값은 적절히 조정 가능
+            length_function=len,
+            is_separator_regex=False,
+        )
+        chunk_texts = text_splitter.split_documents(chunk)
+
+        # Extend the list of texts
+        all_texts.extend(chunk_texts)
+
+    # Embedding
+    embeddings_model = OpenAIEmbeddings(openai_api_key=openai_key)
+
+    # Load it into Chroma
+    db = Chroma.from_documents(all_texts, embeddings_model)
 
     #Stream 받아 줄 Hander 만들기
     from langchain.callbacks.base import BaseCallbackHandler
